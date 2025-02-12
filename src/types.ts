@@ -13,6 +13,18 @@ export type Map = {
   triangleCount: number;
   delaunay: d3.Delaunay<Point>;
   voronoi: d3.Voronoi<Point>;
-  xScale: number;
-  yScale: number;
+  scale: Size;
 };
+
+export type ShapingFunction = "euclidean-squared" | "bump-square";
+
+export type Settings = {
+  shapingFunction: ShapingFunction;
+  wavelength: number;
+  lerp: number;
+  grid: Size;
+};
+
+export type SettingUpdater<T> = <K extends keyof T>(
+  key: T
+) => (value: T[K] | undefined) => void;

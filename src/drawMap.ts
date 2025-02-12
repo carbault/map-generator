@@ -1,36 +1,34 @@
 import { createNoise2D, NoiseFunction2D } from "simplex-noise";
-import { Map, Point, Size } from "./types";
+import { Map, Point, Settings, Size } from "./types";
 import * as d3 from "d3";
-import { lerp } from "./util/math";
-
-const WAVELENGTH = 0.5;
-const JITTER = 0.5;
-const grid: Size = { width: 200, height: 100 }; // todo move to react state
+import { euclideanSquared, lerp, squareBump } from "./util/math";
+import { JITTER } from "./constants";
 
 export function buildMap(
   canvas: HTMLCanvasElement,
-  ctx: CanvasRenderingContext2D
+  ctx: CanvasRenderingContext2D,
+  settings: Settings,
+  seed: number
 ) {
-  const { points, xScale, yScale } = getPointsAndScale(canvas);
+  const { points, scale } = getPointsAndScale(canvas, settings);
   const delaunay = d3.Delaunay.from(
     points,
     (p) => p.x,
     (p) => p.y
   );
 
-  const elevationNoise = createNoise2D();
+  const elevationNoise = createNoise2D(() => seed);
 
   const map: Map = {
     regions: points.map((point) => ({
       point,
-      elevation: getElevation(point, xScale, yScale, grid, elevationNoise),
+      elevation: getElevation(point, scale, settings, elevationNoise),
       moisture: 0,
     })),
     delaunay,
     triangleCount: delaunay.halfedges.length / 3,
     voronoi: delaunay.voronoi([0, 0, canvas.width, canvas.height]),
-    xScale,
-    yScale,
+    scale,
   };
 
   drawMapOnCanvas(map, ctx, {
@@ -39,40 +37,69 @@ export function buildMap(
   });
 }
 
-function getPointsAndScale(canvas: HTMLCanvasElement) {
+function getPointsAndScale(
+  canvas: HTMLCanvasElement,
+  settings: Settings
+): { points: Point[]; scale: Size } {
   const points: Point[] = [];
+  const scale = {
+    width: (canvas.width / settings.grid.width) * window.devicePixelRatio,
+    height: (canvas.height / settings.grid.height) * window.devicePixelRatio,
+  };
 
-  const xScale = (canvas.width / grid.width) * window.devicePixelRatio;
-  const yScale = (canvas.height / grid.height) * window.devicePixelRatio;
-
-  for (let x = 0; x <= grid.width; x++) {
-    for (let y = 0; y <= grid.height; y++) {
+  for (let x = 0; x <= settings.grid.width; x++) {
+    for (let y = 0; y <= settings.grid.height; y++) {
       points.push({
-        x: (x + JITTER * (Math.random() - Math.random())) * xScale,
-        y: (y + JITTER * (Math.random() - Math.random())) * yScale,
+        x: (x + JITTER * (Math.random() - Math.random())) * scale.width,
+        y: (y + JITTER * (Math.random() - Math.random())) * scale.height,
       });
     }
   }
 
-  return { xScale, yScale, points };
+  return { scale, points };
+}
+
+function getBaseElevation(
+  point: Point,
+  scale: Size,
+  settings: Settings,
+  noise: NoiseFunction2D
+): number {
+  const nx = point.x / scale.width / settings.grid.width - 0.5;
+  const ny = point.y / scale.height / settings.grid.height - 0.5;
+  const baseElevation =
+    (1 + noise(nx / settings.wavelength, ny / settings.wavelength)) / 2;
+
+  console.log({ nx, ny, baseElevation });
+  return baseElevation;
+}
+
+function shapeElevation(
+  point: Point,
+  baseElevation: number,
+  scale: Size,
+  settings: Settings
+): number {
+  const nx = (2 * point.x) / scale.width / (settings.grid.width - 1);
+  const ny = (2 * point.y) / scale.height / (settings.grid.height - 1);
+  const distance =
+    settings.shapingFunction === "bump-square"
+      ? squareBump(nx, ny)
+      : euclideanSquared(nx, ny);
+  const elevation = lerp(baseElevation, 1 - distance, settings.lerp);
+
+  console.log({ nx, ny, baseElevation, d: distance, elevation });
+  return elevation;
 }
 
 function getElevation(
   point: Point,
-  xScale: number,
-  yScale: number,
-  grid: Size,
+  scale: Size,
+  settings: Settings,
   noise: NoiseFunction2D
-) {
-  const nx = (2 * point.x) / xScale / (grid.width - 1);
-  const ny = (2 * point.y) / yScale / (grid.height - 1);
-  const baseElevation = (1 + noise(nx / WAVELENGTH, ny / WAVELENGTH)) / 2;
-  // const d = 2 * Math.max(Math.abs(nx), Math.abs(ny)); // should be 0-1
-  const d = Math.min(1, (Math.pow(nx, 2) + Math.pow(ny, 2)) / Math.sqrt(2));
-  const elevation = lerp(baseElevation, 1 - d, 0.25);
-  console.log(nx, ny, baseElevation, d, elevation);
-  return elevation;
-  // return (1 + pointElevation - d) / 2;
+): number {
+  const baseElevation = getBaseElevation(point, scale, settings, noise);
+  return shapeElevation(point, baseElevation, scale, settings);
 }
 
 function getElevationColor(elevation: number): string {
@@ -80,7 +107,7 @@ function getElevationColor(elevation: number): string {
   if (elevation < 0.35) return "#072F4B";
   if (elevation < 0.4) return "#093A5D";
   if (elevation < 0.5) return "#0B466F";
-  if (elevation < 0.6) return "##8EB979";
+  if (elevation < 0.6) return "#b0cea1";
   if (elevation < 0.7) return "#9CC18A";
   if (elevation < 0.8) return "#8EB979";
   if (elevation < 0.85) return "#83B26C";
