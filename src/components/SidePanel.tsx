@@ -1,6 +1,7 @@
 import { Settings } from "../types";
 import { Button } from "./generic/Button";
 import { DownloadIcon } from "./generic/icons/DownloadIcon";
+import { RefreshIcon } from "./generic/icons/RefreshIcon";
 
 import SettingList from "./SettingsList";
 
@@ -21,6 +22,7 @@ export default function SidePanel(props: {
         Download
       </Button>
       <Button onClick={onGenerateNewMap} className="uppercase">
+        <RefreshIcon />
         New map
       </Button>
     </div>
