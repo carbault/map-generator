@@ -70,7 +70,6 @@ function getBaseElevation(
   const baseElevation =
     (1 + noise(nx / settings.wavelength, ny / settings.wavelength)) / 2;
 
-  console.log({ nx, ny, baseElevation });
   return baseElevation;
 }
 
@@ -88,7 +87,6 @@ function shapeElevation(
       : euclideanSquared(nx, ny);
   const elevation = lerp(baseElevation, 1 - distance, settings.lerp);
 
-  console.log({ nx, ny, baseElevation, d: distance, elevation });
   return elevation;
 }
 
@@ -124,19 +122,16 @@ function drawMapOnCanvas(
   ctx.clearRect(0, 0, canvasSize.width, canvasSize.height);
   ctx.lineWidth = 1;
 
-  // draw map regions
   map.regions.forEach((region, index) => {
     ctx.beginPath();
-    ctx.fillStyle = getElevationColor(region.elevation);
+    const color = getElevationColor(region.elevation);
+    ctx.fillStyle = color;
+    ctx.strokeStyle = color;
+    ctx.stroke(new Path2D(map.voronoi.renderCell(index)));
     map.voronoi.renderCell(index, ctx);
     ctx.fill();
+    ctx.closePath();
   });
-
-  //   ctx.beginPath();
-  //   map.voronoi.render(ctx);
-  //   map.voronoi.renderBounds(ctx);
-  //   ctx.strokeStyle = "#000";
-  //   ctx.stroke();
 
   ctx.beginPath();
   ctx.fill();
