@@ -1,15 +1,13 @@
 import { Settings, SettingUpdater, Size } from "../types";
-import { Button } from "./generic/Button";
 import Field from "./generic/Field";
 import Label from "./generic/Label";
 import { NumberInput } from "./generic/NumberInput";
 
-export default function SettingsPanel(props: {
+export default function SettingList(props: {
   settings: Settings;
   onUpdateSettings: (newSettings: Settings) => void;
-  onGenerateNewMap: () => void;
 }) {
-  const { settings, onUpdateSettings, onGenerateNewMap } = props;
+  const { settings, onUpdateSettings } = props;
 
   const updateSetting: SettingUpdater<keyof Settings> =
     (setting) => (newValue) => {
@@ -28,8 +26,7 @@ export default function SettingsPanel(props: {
   };
 
   return (
-    <div className="h-full w-xs flex flex-col gap-4 p-6 bg-settings border-r border-r-sea-shallower">
-      <h1 className="text-3xl font-medium text-plains-1 uppercase">Settings</h1>
+    <>
       <Field>
         <Label>Sea level</Label>
         <NumberInput
@@ -40,7 +37,11 @@ export default function SettingsPanel(props: {
         />
       </Field>
       <Field>
-        <Label>Wavelength</Label>
+        <Label
+          tooltip={"This will affect sea level and have sort of a zoom effect"}
+        >
+          Wavelength
+        </Label>
         <NumberInput
           min={0}
           max={1}
@@ -66,9 +67,6 @@ export default function SettingsPanel(props: {
           onChange={updateGridSize("width")}
         />
       </Field>
-      <Button onClick={onGenerateNewMap} className="mt-auto uppercase">
-        New map
-      </Button>
-    </div>
+    </>
   );
 }

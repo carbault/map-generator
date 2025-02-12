@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { buildMap } from "./drawMap";
 import { DEFAULT_SETTINGS } from "./constants";
 import { Settings } from "./types";
-import SettingsPanel from "./components/SettingsPanel";
+import SidePanel from "./components/SidePanel";
 
 const SETTINGS_WIDTH = 320;
 
@@ -13,6 +13,17 @@ export default function App() {
 
   const generateNewSeed = () => {
     setSeed(Math.random());
+  };
+
+  const downloadMap = () => {
+    if (canvasRef) {
+      const image = canvasRef.toDataURL();
+      const fileName = `map_${seed.toString().replace(".", "")}.png`;
+      const downloadLink = document.createElement("a");
+      downloadLink.download = fileName;
+      downloadLink.href = image;
+      downloadLink.click();
+    }
   };
 
   const scaleCanvas = useCallback((canvas: HTMLCanvasElement) => {
@@ -38,10 +49,11 @@ export default function App() {
 
   return (
     <div className="h-full w-full flex">
-      <SettingsPanel
+      <SidePanel
         settings={settings}
         onUpdateSettings={setSettings}
         onGenerateNewMap={generateNewSeed}
+        onDownloadMap={downloadMap}
       />
       <canvas
         ref={setCanvasRef}
