@@ -1,13 +1,15 @@
 import { useCallback, useEffect, useState } from "react";
 import { buildMap } from "./drawMap";
 import { DEFAULT_SETTINGS } from "./constants";
-import { Settings } from "./types";
+import { Settings, Size } from "./types";
 import SidePanel from "./components/SidePanel";
 
 const SETTINGS_WIDTH = 320;
 
 export default function App() {
   const [canvasRef, setCanvasRef] = useState<HTMLCanvasElement | null>(null);
+  const [containerRef, setContainerRef] = useState<HTMLDivElement | null>(null);
+  const [canvasSize, setCanvasSize] = useState<Size>({ width: 0, height: 0 });
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
   const [seed, setSeed] = useState(Math.random());
 
@@ -26,26 +28,39 @@ export default function App() {
     }
   };
 
-  const scaleCanvas = useCallback((canvas: HTMLCanvasElement) => {
+  const scaleCanvas = useCallback((canvas: HTMLCanvasElement, size: Size) => {
     const scale = window.devicePixelRatio;
-    canvas.style.width = canvas.width + "px";
-    canvas.style.height = canvas.height + "px";
-    canvas.width = canvas.width * scale;
-    canvas.height = canvas.height * scale;
+    canvas.style.width = size.width + "px";
+    canvas.style.height = size.height + "px";
+    canvas.width = size.width * scale;
+    canvas.height = size.height * scale;
   }, []);
 
   useEffect(() => {
-    if (canvasRef) {
-      scaleCanvas(canvasRef);
+    if (canvasRef && containerRef) {
+      const observer = new ResizeObserver((entries) => {
+        if (entries[0]) {
+          const size = {
+            width: entries[0].contentRect.width,
+            height: entries[0].contentRect.height,
+          };
+          setCanvasSize(size);
+          scaleCanvas(canvasRef, size);
+        }
+      });
+      observer.observe(containerRef);
+      return () => {
+        observer.disconnect();
+      };
     }
-  }, [canvasRef, scaleCanvas]);
+  }, [canvasRef, containerRef, scaleCanvas]);
 
   useEffect(() => {
     const ctx = canvasRef?.getContext("2d");
     if (canvasRef && ctx) {
       buildMap(canvasRef, ctx, settings, seed);
     }
-  }, [canvasRef, settings, seed, scaleCanvas]);
+  }, [canvasSize, canvasRef, settings, seed]);
 
   return (
     <div className="h-full w-full flex">
@@ -55,12 +70,9 @@ export default function App() {
         onGenerateNewMap={generateNewSeed}
         onDownloadMap={downloadMap}
       />
-      <canvas
-        ref={setCanvasRef}
-        id="container"
-        width={window.innerWidth - SETTINGS_WIDTH}
-        height={window.innerHeight}
-      />
+      <div ref={setContainerRef} className="h-full flex flex-1">
+        <canvas ref={setCanvasRef} id="container" />
+      </div>
     </div>
   );
 }
