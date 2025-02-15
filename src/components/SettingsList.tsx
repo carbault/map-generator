@@ -65,7 +65,7 @@ export default function SettingList(props: {
       </Field>
       <Field>
         <Label tooltip="Affects how close the island shape is to the shape type">
-          Shaping aggressiveness
+          Shaping strength
         </Label>
         <Slider
           min={0}
@@ -80,7 +80,8 @@ export default function SettingList(props: {
         </Label>
         <Slider
           min={0}
-          max={1}
+          max={0.3}
+          step={0.001}
           value={settings.wavelength}
           onChange={updateSetting("wavelength")}
         />

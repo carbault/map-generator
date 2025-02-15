@@ -8,7 +8,7 @@ export const DEFAULT_SETTINGS: Settings = {
   lerp: 0.5,
   seaLevel: 0.5,
   grid: { width: 300, height: 150 },
-  shapingFunction: ShapingFunction.euclidean,
+  shapingFunction: ShapingFunction.squareBump,
   type: MapType.island,
 };
 
