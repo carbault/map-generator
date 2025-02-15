@@ -8,8 +8,8 @@ import {
 import { capitalize } from "../util/str";
 import Field from "./generic/Field";
 import Label from "./generic/Label";
-import { NumberInput } from "./generic/NumberInput";
-import { Select } from "./generic/Select";
+import NumberInput from "./generic/NumberInput";
+import Select from "./generic/Select";
 
 const SHAPING_FN_LABEL: Record<ShapingFunction, string> = {
   "square-bump": "Rounded rectangle",

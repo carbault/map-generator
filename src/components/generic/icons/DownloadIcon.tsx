@@ -30,4 +30,4 @@ const DownloadIcon = React.forwardRef<
 });
 
 DownloadIcon.displayName = "DownloadIcon";
-export { DownloadIcon };
+export default DownloadIcon;

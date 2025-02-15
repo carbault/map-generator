@@ -1,5 +1,5 @@
 import { JSX } from "react";
-import { HelpIcon } from "./icons/HelpIcon";
+import HelpIcon from "./icons/HelpIcon";
 import Tooltip from "./Tooltip";
 
 export default function Label(props: {
@@ -11,6 +11,7 @@ export default function Label(props: {
   return (
     <div
       className="text-sm text-snow font-light flex gap-1 items-center"
+      aria-roledescription="label"
       role="label"
     >
       {children}

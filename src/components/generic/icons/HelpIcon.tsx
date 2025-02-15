@@ -21,4 +21,4 @@ const HelpIcon = React.forwardRef<
 });
 
 HelpIcon.displayName = "HelpIcon";
-export { HelpIcon };
+export default HelpIcon;

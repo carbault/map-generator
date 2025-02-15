@@ -26,4 +26,4 @@ const RefreshIcon = React.forwardRef<
 });
 
 RefreshIcon.displayName = "RefreshIcon";
-export { RefreshIcon };
+export default RefreshIcon;

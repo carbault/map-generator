@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import React from "react";
 
-export function DropdownOption(props: {
+export default function DropdownOption(props: {
   children: React.ReactNode;
   isSelected: boolean;
   onClick: (event: React.MouseEvent) => void;

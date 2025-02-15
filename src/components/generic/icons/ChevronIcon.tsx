@@ -25,4 +25,4 @@ const ChevronIcon = React.forwardRef<
 });
 
 ChevronIcon.displayName = "ChevronIcon";
-export { ChevronIcon };
+export default ChevronIcon;

@@ -1,11 +1,11 @@
 import * as Popover from "@radix-ui/react-popover";
 import React, { useState } from "react";
-import { Button } from "./Button";
-import { ChevronIcon } from "./icons/ChevronIcon";
-import { DropdownOption } from "./DropdownOption";
+import Button from "./Button";
+import ChevronIcon from "./icons/ChevronIcon";
+import DropdownOption from "./DropdownOption";
 import classNames from "classnames";
 
-export function Select<T extends React.Key>(props: {
+export default function Select<T extends React.Key>(props: {
   value: T | undefined;
   onChange: (newValue: T | undefined) => void;
   items: { value: T; label: string }[];
@@ -35,7 +35,7 @@ export function Select<T extends React.Key>(props: {
       </Popover.Trigger>
       <Popover.Content
         align="start"
-        className="my-1 w-[var(--radix-popover-trigger-width)] max-h-[min(var(--radix-popover-content-available-height),300px)] rounded border shadow-md bg-snow border-gray-100 p-1 overflow-hidden flex flex-col overflow-y-auto gap-1"
+        className="my-1 w-[var(--radix-popover-trigger-width)] max-h-[min(var(--radix-popover-content-available-height),300px)] rounded border shadow-md bg-snow border-gray-100 p-1 overflow-hidden flex flex-col overflow-y-auto gap-1 z-10"
       >
         {items.map((item, index) => (
           <DropdownOption
