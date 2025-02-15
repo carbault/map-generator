@@ -6,7 +6,7 @@ export type RegionData = {
   point: Point;
   index: number;
   elevation: number;
-  moisture: number;
+  moisture: number; // TODO generate + mix with elevation to generate biomes
 };
 
 export type Map = {
@@ -30,6 +30,7 @@ export enum ShapingFunction {
 export type Settings = {
   type: MapType;
   shapingFunction: ShapingFunction;
+  seaLevel: number;
   wavelength: number;
   lerp: number;
   grid: Size;

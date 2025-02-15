@@ -39,7 +39,7 @@ export default function SettingList(props: {
   };
 
   return (
-    <>
+    <div className="h-full flex flex-col gap-3 overflow-y-auto">
       <Field>
         <Label>Map type</Label>
         <Select
@@ -85,6 +85,15 @@ export default function SettingList(props: {
         />
       </Field>
       <Field>
+        <Label>Sea level</Label>
+        <NumberInput
+          min={0}
+          max={1}
+          value={settings.seaLevel}
+          onChange={updateSetting("seaLevel")}
+        />
+      </Field>
+      <Field>
         <Label>Grid height</Label>
         <NumberInput
           min={25}
@@ -102,6 +111,6 @@ export default function SettingList(props: {
           onChange={updateGridSize("width")}
         />
       </Field>
-    </>
+    </div>
   );
 }

@@ -32,10 +32,12 @@ export function buildMap(
     scale,
   };
 
-  drawMapOnCanvas(map, ctx, {
-    height: canvas.height,
-    width: canvas.width,
-  });
+  drawMapOnCanvas(
+    map,
+    ctx,
+    { height: canvas.height, width: canvas.width },
+    settings
+  );
 }
 
 function getPointsAndScale(
@@ -121,31 +123,35 @@ function getElevation(
   return shapeElevation(point, baseElevation, scale, settings);
 }
 
-function getElevationColor(elevation: number): string {
-  if (elevation < 0.3) return "#062337";
-  if (elevation < 0.35) return "#072F4B";
-  if (elevation < 0.4) return "#093A5D";
-  if (elevation < 0.5) return "#0B466F";
-  if (elevation < 0.6) return "#b0cea1";
-  if (elevation < 0.7) return "#9CC18A";
-  if (elevation < 0.8) return "#8EB979";
-  if (elevation < 0.85) return "#83B26C";
-  if (elevation < 0.9) return "#79AB5F";
-  if (elevation < 0.95) return "#6EA054";
+function getElevationColor(elevation: number, settings: Settings): string {
+  // sea
+  if (elevation < settings.seaLevel - 0.2) return "#062337";
+  if (elevation < settings.seaLevel - 0.15) return "#072F4B";
+  if (elevation < settings.seaLevel - 0.1) return "#093A5D";
+  if (elevation < settings.seaLevel) return "#0B466F";
+  // land
+  if (elevation < settings.seaLevel + 0.1) return "#b0cea1";
+  if (elevation < settings.seaLevel + 0.2) return "#9CC18A";
+  if (elevation < settings.seaLevel + 0.3) return "#8EB979";
+  if (elevation < settings.seaLevel + 0.35) return "#83B26C";
+  if (elevation < settings.seaLevel + 0.4) return "#79AB5F";
+  if (elevation < settings.seaLevel + 0.45) return "#6EA054";
+  // snow
   return "#F0EEE1";
 }
 
 function drawMapOnCanvas(
   map: Map,
   ctx: CanvasRenderingContext2D,
-  canvasSize: Size
+  canvasSize: Size,
+  settings: Settings
 ) {
   ctx.clearRect(0, 0, canvasSize.width, canvasSize.height);
   ctx.lineWidth = 1;
 
   map.regions.forEach((region, index) => {
     ctx.beginPath();
-    const color = getElevationColor(region.elevation);
+    const color = getElevationColor(region.elevation, settings);
     ctx.fillStyle = color;
     ctx.strokeStyle = color;
     ctx.stroke(new Path2D(map.voronoi.renderCell(index)));
