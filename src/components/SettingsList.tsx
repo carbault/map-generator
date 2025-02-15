@@ -10,6 +10,7 @@ import Field from "./generic/Field";
 import Label from "./generic/Label";
 import NumberInput from "./generic/NumberInput";
 import Select from "./generic/Select";
+import Slider from "./generic/Slider";
 
 const SHAPING_FN_LABEL: Record<ShapingFunction, string> = {
   "square-bump": "Rounded rectangle",
@@ -66,7 +67,7 @@ export default function SettingList(props: {
         <Label tooltip="Affects how close the island shape is to the shape type">
           Shaping aggressiveness
         </Label>
-        <NumberInput
+        <Slider
           min={0}
           max={1}
           value={settings.lerp}
@@ -77,7 +78,7 @@ export default function SettingList(props: {
         <Label tooltip="Affects how the noise is applied to the map and the island shape">
           Wavelength
         </Label>
-        <NumberInput
+        <Slider
           min={0}
           max={1}
           value={settings.wavelength}
@@ -86,7 +87,7 @@ export default function SettingList(props: {
       </Field>
       <Field>
         <Label>Sea level</Label>
-        <NumberInput
+        <Slider
           min={0}
           max={1}
           value={settings.seaLevel}
