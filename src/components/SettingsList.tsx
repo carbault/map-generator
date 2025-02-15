@@ -30,7 +30,7 @@ export default function SettingList(props: {
     };
 
   const updateGridSize = (side: keyof Size) => (value: number | undefined) => {
-    if (value !== undefined && value >= 0) {
+    if (value !== undefined) {
       onUpdateSettings({
         ...settings,
         grid: { ...settings.grid, [side]: value },
