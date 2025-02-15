@@ -15,6 +15,8 @@ import Slider from "./generic/Slider";
 const SHAPING_FN_LABEL: Record<ShapingFunction, string> = {
   "square-bump": "Rounded rectangle",
   "euclidean-squared": "Oval",
+  "distance-squared": "Oval variant",
+  squircle: "Squared circle",
 };
 
 export default function SettingList(props: {

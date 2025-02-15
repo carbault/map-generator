@@ -24,7 +24,9 @@ export enum MapType {
 
 export enum ShapingFunction {
   euclidean = "euclidean-squared",
+  distanceSquared = "distance-squared",
   squareBump = "square-bump",
+  squircle = "squircle",
 }
 
 export type Settings = {

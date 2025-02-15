@@ -1,5 +1,10 @@
 import { MapType, Settings, ShapingFunction } from "./types";
-import { euclideanSquared, squareBump } from "./util/math";
+import {
+  euclideanSquared,
+  squareBump,
+  squircle,
+  distanceSquared,
+} from "./util/math";
 
 export const JITTER = 0.5;
 
@@ -17,5 +22,7 @@ export const SHAPING_FUNCTIONS: Record<
   (nx: number, ny: number) => number
 > = {
   "euclidean-squared": euclideanSquared,
+  "distance-squared": distanceSquared,
   "square-bump": squareBump,
+  squircle: squircle,
 };
