@@ -7,11 +7,13 @@ This is written and Typescript and React, and uses [D3](https://d3js.org/) for D
 Please note that this is a very early-stage work in project and its features are therefore limited.
 Next planned improvements are rainfall generation, river generation and town generation.
 
-# Run locally
+# Run it
 
-Install [pnpm](https://pnpm.io/), clone this repository and run the following commands from inside the repository:
+- Online, from the version deployed on [Github Pages](https://carbault.github.io/map-generator/)
+- Or locally, after installing [pnpm](https://pnpm.io/) and cloning this repository:
 
 ```shell
+## (inside this repository)
 pnpm install
 pnpm run dev
 ```
