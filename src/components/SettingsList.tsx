@@ -40,7 +40,7 @@ export default function SettingList(props: {
   };
 
   return (
-    <div className="h-full flex flex-col gap-3 overflow-y-auto">
+    <div className="h-full flex flex-col gap-4 overflow-y-auto">
       <Field>
         <Label>Map type</Label>
         <Select
