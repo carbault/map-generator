@@ -4,6 +4,7 @@ export type Size = { height: number; width: number };
 
 export type RegionData = {
   point: Point;
+  index: number;
   elevation: number;
   moisture: number;
 };
@@ -16,9 +17,18 @@ export type Map = {
   scale: Size;
 };
 
-export type ShapingFunction = "euclidean-squared" | "bump-square";
+export enum MapType {
+  island = "island",
+  coastline = "coastline",
+}
+
+export enum ShapingFunction {
+  euclidean = "euclidean-squared",
+  squareBump = "square-bump",
+}
 
 export type Settings = {
+  type: MapType;
   shapingFunction: ShapingFunction;
   wavelength: number;
   lerp: number;

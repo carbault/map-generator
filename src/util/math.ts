@@ -22,3 +22,11 @@ export function euclideanSquared(nx: number, ny: number): number {
 export function squareBump(nx: number, ny: number): number {
   return 1 - (1 - Math.pow(nx, 2)) * (1 - Math.pow(ny, 2));
 }
+
+export function mapToInterval(
+  oldValue: number,
+  [oldMin, oldMax]: [number, number],
+  [newMin, newMax]: [number, number]
+) {
+  return ((oldValue - oldMin) * (newMax - newMin)) / (oldMax - oldMin) + newMin;
+}

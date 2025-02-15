@@ -10,7 +10,7 @@ const Button = React.forwardRef<
   return (
     <button
       className={classNames(
-        "rounded flex overflow-hidden h-10 text-nowrap bg-lake-shallower text-snow hover:bg-lake-shallow hover:shadow-hover text-ellipsis whitespace-nowrap p-2 cursor-pointer data-[state=open]:bg-plains-2 flex-nowrap gap-2 items-center justify-center !text-center",
+        "rounded flex overflow-hidden h-10 text-nowrap bg-lake-shallower text-snow hover:bg-lake-shallow hover:shadow-hover text-ellipsis whitespace-nowrap p-2 cursor-pointer data-[state=open]:bg-lake-shallow flex-nowrap gap-2 items-center justify-center !text-center",
         className
       )}
       {...divProps}

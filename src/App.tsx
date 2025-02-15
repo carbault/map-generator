@@ -4,8 +4,6 @@ import { DEFAULT_SETTINGS } from "./constants";
 import { Settings, Size } from "./types";
 import SidePanel from "./components/SidePanel";
 
-const SETTINGS_WIDTH = 320;
-
 export default function App() {
   const [canvasRef, setCanvasRef] = useState<HTMLCanvasElement | null>(null);
   const [containerRef, setContainerRef] = useState<HTMLDivElement | null>(null);

@@ -1,7 +1,20 @@
-import { Settings, SettingUpdater, Size } from "../types";
+import {
+  MapType,
+  Settings,
+  SettingUpdater,
+  ShapingFunction,
+  Size,
+} from "../types";
+import { capitalize } from "../util/str";
 import Field from "./generic/Field";
 import Label from "./generic/Label";
 import { NumberInput } from "./generic/NumberInput";
+import { Select } from "./generic/Select";
+
+const SHAPING_FN_LABEL: Record<ShapingFunction, string> = {
+  "square-bump": "Rounded rectangle",
+  "euclidean-squared": "Oval",
+};
 
 export default function SettingList(props: {
   settings: Settings;
@@ -28,7 +41,31 @@ export default function SettingList(props: {
   return (
     <>
       <Field>
-        <Label>Sea level</Label>
+        <Label>Map type</Label>
+        <Select
+          value={settings.type}
+          onChange={updateSetting("type")}
+          items={Object.keys(MapType).map((value) => ({
+            value,
+            label: capitalize(value),
+          }))}
+        />
+      </Field>
+      <Field>
+        <Label>Shaping type</Label>
+        <Select
+          value={settings.shapingFunction}
+          onChange={updateSetting("shapingFunction")}
+          items={Object.values(ShapingFunction).map((value) => ({
+            value,
+            label: SHAPING_FN_LABEL[value],
+          }))}
+        />
+      </Field>
+      <Field>
+        <Label tooltip="Affects how close the island shape is to the shape type">
+          Shaping aggressiveness
+        </Label>
         <NumberInput
           min={0}
           max={1}
@@ -37,9 +74,7 @@ export default function SettingList(props: {
         />
       </Field>
       <Field>
-        <Label
-          tooltip={"This will affect sea level and have sort of a zoom effect"}
-        >
+        <Label tooltip="Affects how the noise is applied to the map and the island shape">
           Wavelength
         </Label>
         <NumberInput
