@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { buildMap } from "./drawMap";
+import { buildMap } from "./map/buildMap";
 import { DEFAULT_SETTINGS } from "./constants";
 import { Settings, Size } from "./types";
 import SidePanel from "./components/SidePanel";
