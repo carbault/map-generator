@@ -1,15 +1,15 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { buildMap } from "./map/buildMap";
 import { DEFAULT_SETTINGS } from "./constants";
-import { Settings, Size } from "./types";
+import { Settings } from "./types";
 import SidePanel from "./components/SidePanel";
+import { useHandleMapCanvas } from "./hooks/useHandleMapCanvas";
 
 export default function App() {
-  const [canvasRef, setCanvasRef] = useState<HTMLCanvasElement | null>(null);
-  const [containerRef, setContainerRef] = useState<HTMLDivElement | null>(null);
-  const [canvasSize, setCanvasSize] = useState<Size>({ width: 0, height: 0 });
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
   const [seed, setSeed] = useState(Math.random());
+  const { setCanvasRef, setContainerRef, canvasRef, canvasSize } =
+    useHandleMapCanvas();
 
   const generateNewSeed = () => {
     setSeed(Math.random());
@@ -25,33 +25,6 @@ export default function App() {
       downloadLink.click();
     }
   };
-
-  const scaleCanvas = useCallback((canvas: HTMLCanvasElement, size: Size) => {
-    const scale = window.devicePixelRatio;
-    canvas.style.width = size.width + "px";
-    canvas.style.height = size.height + "px";
-    canvas.width = size.width * scale;
-    canvas.height = size.height * scale;
-  }, []);
-
-  useEffect(() => {
-    if (canvasRef && containerRef) {
-      const observer = new ResizeObserver((entries) => {
-        if (entries[0]) {
-          const size = {
-            width: entries[0].contentRect.width,
-            height: entries[0].contentRect.height,
-          };
-          setCanvasSize(size);
-          scaleCanvas(canvasRef, size);
-        }
-      });
-      observer.observe(containerRef);
-      return () => {
-        observer.disconnect();
-      };
-    }
-  }, [canvasRef, containerRef, scaleCanvas]);
 
   useEffect(() => {
     const ctx = canvasRef?.getContext("2d");
