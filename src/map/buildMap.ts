@@ -19,6 +19,10 @@ export function buildMap(
   );
 
   const elevationNoise = createNoise2D(() => seed);
+  const canvasSize = {
+    height: canvas.width,
+    width: canvas.height,
+  };
 
   const map: Map = {
     regions: points.map((point, index) => ({
@@ -33,12 +37,7 @@ export function buildMap(
     scale,
   };
 
-  drawMapOnCanvas(
-    map,
-    ctx,
-    { height: canvas.height, width: canvas.width },
-    settings
-  );
+  drawMapOnCanvas(map, ctx, canvasSize, settings);
 }
 
 function getPointsAndScale(
@@ -47,8 +46,8 @@ function getPointsAndScale(
 ): { points: Point[]; scale: Size } {
   const points: Point[] = [];
   const scale = {
-    width: (canvas.width / settings.grid.width) * window.devicePixelRatio,
-    height: (canvas.height / settings.grid.height) * window.devicePixelRatio,
+    width: canvas.width / settings.grid.width,
+    height: canvas.height / settings.grid.height,
   };
 
   for (let x = 0; x <= settings.grid.width; x++) {
@@ -92,7 +91,7 @@ function shapeElevation(
   scale: Size,
   settings: Settings
 ): number {
-  const factor = settings.type === MapType.island ? 2 : 1;
+  const factor = settings.type === MapType.island ? 1 : 0.5;
   const nx = mapToInterval(
     (factor * point.x) / scale.width,
     [0, settings.grid.width],
