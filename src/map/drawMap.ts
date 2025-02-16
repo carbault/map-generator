@@ -9,6 +9,13 @@ export function drawMapOnCanvas(
   ctx.clearRect(0, 0, canvasSize.width, canvasSize.height);
   drawRegions(ctx, map, settings);
   drawRivers(ctx, map.regions, settings);
+
+  //   ctx.beginPath();
+  //   ctx.strokeStyle = "white";
+  //   ctx.fillStyle = "white";
+  //   ctx.lineWidth = 1;
+  //   map.delaunay.render(ctx);
+  //   ctx.stroke();
 }
 
 function drawRegions(
@@ -35,7 +42,7 @@ function drawRivers(
   settings: Settings
 ) {
   const seen: number[] = [];
-  ctx.strokeStyle = "#0B466";
+  ctx.strokeStyle = "#0B466F";
   ctx.lineWidth = 2;
 
   for (const region of regions) {
@@ -45,7 +52,6 @@ function drawRivers(
 
     ctx.beginPath();
     let riverCell = region;
-    ctx.beginPath();
     ctx.moveTo(region.point.x, region.point.y);
 
     while (

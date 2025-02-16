@@ -8,6 +8,7 @@ export type RegionData = {
   elevation: number;
   moisture: number; // TODO generate + mix with elevation to generate biomes
   river: number; // 0 if no river, or volume of water in river
+  distanceScore: number; // used to compute path to sea
   downslope?: number; // index of lowest adjacent region
   watershed?: number; // index of coastal watershed region
   isCoast?: boolean;

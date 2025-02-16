@@ -4,7 +4,6 @@ import { minBy, sortBy } from "../util/array";
 export function calculateRivers(map: Map, settings: Settings): Map {
   let regions = calculateDownslopes(map, settings);
   regions = calculateWatersheds(regions, settings);
-
   return { ...map, regions };
 }
 
@@ -18,8 +17,15 @@ function calculateDownslopes(map: Map, settings: Settings): RegionData[] {
       (i) => map.regions[i]
     );
 
+    if (adjacent.length === 0) {
+      return region;
+    }
+
+    const lowestAdjacent = minBy(adjacent, "elevation");
     const downslope =
-      adjacent.length > 0 ? minBy(adjacent, "elevation").index : undefined;
+      lowestAdjacent.elevation < region.elevation
+        ? lowestAdjacent.index
+        : minBy(adjacent, "distanceScore").index;
 
     return {
       ...region,

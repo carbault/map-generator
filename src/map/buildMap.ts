@@ -3,7 +3,7 @@ import { Map, Point, Settings, Size } from "../types";
 import * as d3 from "d3";
 import { JITTER } from "../constants";
 import { drawMapOnCanvas } from "./drawMap";
-import { getElevation } from "./elevation";
+import { getElevationAndDistanceScore } from "./elevation";
 import { calculateRivers } from "./rivers";
 
 export function buildMap(
@@ -30,7 +30,7 @@ export function buildMap(
     regions: points.map((point, index) => ({
       point,
       index,
-      elevation: getElevation(point, scale, settings, elevationNoise),
+      ...getElevationAndDistanceScore(point, scale, settings, elevationNoise),
       moisture: 0,
       river: 0,
     })),

@@ -3,12 +3,12 @@ import { SHAPING_FUNCTIONS } from "../constants";
 import { Point, Size, Settings, MapType } from "../types";
 import { mapToInterval, lerp } from "../util/math";
 
-export function getElevation(
+export function getElevationAndDistanceScore(
   point: Point,
   scale: Size,
   settings: Settings,
   noise: NoiseFunction2D
-): number {
+): { elevation: number; distanceScore: number } {
   const baseElevation = getBaseElevation(point, scale, settings, noise);
   return shapeElevation(point, baseElevation, scale, settings);
 }
@@ -41,7 +41,7 @@ function shapeElevation(
   baseElevation: number,
   scale: Size,
   settings: Settings
-): number {
+): { elevation: number; distanceScore: number } {
   const factor = settings.type === MapType.island ? 1 : 0.5;
   const nx = mapToInterval(
     (factor * point.x) / scale.width,
@@ -55,11 +55,14 @@ function shapeElevation(
     [-1, 1]
   );
 
+  // the distance score is the distance to the middle of the map on an island,
+  // or the corner on a coastline map
+  const distanceScore = 1 - SHAPING_FUNCTIONS[settings.shapingFunction](nx, ny);
   const elevation = lerp(
     baseElevation,
-    1 - SHAPING_FUNCTIONS[settings.shapingFunction](nx, ny),
+    distanceScore,
     settings.lerp // the higher this factor is, the closer the map will be to the specified shape
   );
 
-  return elevation;
+  return { elevation, distanceScore };
 }
