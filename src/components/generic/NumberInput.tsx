@@ -6,12 +6,12 @@ export type InputProps = Omit<
   "value" | "onChange" | "defaultValue" | "type" | "onBlur" | "onSubmit"
 > & {
   value: number | undefined;
-  onChange: (newValue: number | undefined) => void;
+  onSubmit: (newValue: number | undefined) => void;
 };
 
 const NumberInput = React.forwardRef<HTMLInputElement, InputProps>(
   (props, ref) => {
-    const { value, onChange, className, ...restProps } = props;
+    const { value, onSubmit, className, ...restProps } = props;
 
     const inputRef = useRef<HTMLInputElement>(null);
     const isEscapePressed = useRef<boolean>(false);
@@ -21,7 +21,6 @@ const NumberInput = React.forwardRef<HTMLInputElement, InputProps>(
       const valueAsNumber = event.currentTarget.valueAsNumber;
       if (isFinite(valueAsNumber)) {
         setEditedValue(valueAsNumber);
-        onChange(valueAsNumber);
         return;
       }
       setEditedValue(undefined);
@@ -42,7 +41,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, InputProps>(
       if (isEscapePressed.current) {
         setEditedValue(undefined);
       } else {
-        onChange(editedValue);
+        onSubmit(editedValue);
         setEditedValue(undefined);
       }
       isEscapePressed.current = false;

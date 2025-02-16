@@ -103,7 +103,7 @@ export default function SettingList(props: {
           min={25}
           max={500}
           value={settings.grid.height}
-          onChange={updateGridSize("height")}
+          onSubmit={updateGridSize("height")}
         />
       </Field>
       <Field>
@@ -112,7 +112,7 @@ export default function SettingList(props: {
           min={50}
           max={1000}
           value={settings.grid.width}
-          onChange={updateGridSize("width")}
+          onSubmit={updateGridSize("width")}
         />
       </Field>
     </div>
