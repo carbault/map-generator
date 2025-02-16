@@ -23,8 +23,24 @@ export function minBy<T extends { [key in K]: number }, K extends keyof T>(
   arr: T[],
   key: K
 ): T {
-  return arr.reduce(
-    (acc, current) => (acc[key] > current[key] ? current : acc),
-    arr[0]
-  );
+  return arr
+    .slice()
+    .reduce(
+      (acc, current) => (acc[key] > current[key] ? current : acc),
+      arr[0]
+    );
+}
+
+/**
+ * Sorts an array of objects by the value of one of
+ * its numeric attributes
+ */
+export function sortBy<
+  T extends { [key in K]: V },
+  K extends keyof T,
+  V extends number,
+>(arr: T[], key: K, direction: "asc" | "desc" = "asc"): T[] {
+  return arr
+    .slice()
+    .sort((a, b) => (direction === "asc" ? a[key] - b[key] : b[key] - a[key]));
 }

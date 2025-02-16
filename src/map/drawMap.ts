@@ -1,4 +1,4 @@
-import { Settings, Size, Map } from "../types";
+import { Settings, Size, Map, RegionData } from "../types";
 
 export function drawMapOnCanvas(
   map: Map,
@@ -7,45 +7,61 @@ export function drawMapOnCanvas(
   settings: Settings
 ) {
   ctx.clearRect(0, 0, canvasSize.width, canvasSize.height);
-  ctx.lineWidth = 1;
+  drawRegions(ctx, map, settings);
+  drawRivers(ctx, map.regions, settings);
+}
 
-  // draw regions
-  map.regions.forEach((region, index) => {
+function drawRegions(
+  ctx: CanvasRenderingContext2D,
+  map: Map,
+  settings: Settings
+) {
+  ctx.lineWidth = 1;
+  for (const region of map.regions) {
     ctx.beginPath();
     const color = getElevationColor(region.elevation, settings);
     ctx.fillStyle = color;
     ctx.strokeStyle = color;
-    ctx.stroke(new Path2D(map.voronoi.renderCell(index)));
-    map.voronoi.renderCell(index, ctx);
+    ctx.stroke(new Path2D(map.voronoi.renderCell(region.index)));
+    map.voronoi.renderCell(region.index, ctx);
     ctx.fill();
     ctx.closePath();
-  });
+  }
+}
 
-  // draw rivers
+function drawRivers(
+  ctx: CanvasRenderingContext2D,
+  regions: RegionData[],
+  settings: Settings
+) {
   const seen: number[] = [];
-  map.regions.forEach((region) => {
-    ctx.beginPath();
-    ctx.strokeStyle = "#093a5d";
-    ctx.lineWidth = 2;
+  ctx.strokeStyle = "#0B466";
+  ctx.lineWidth = 2;
 
+  for (const region of regions) {
+    if (!region.watershed) {
+      continue;
+    }
+
+    ctx.beginPath();
     let riverCell = region;
     ctx.beginPath();
     ctx.moveTo(region.point.x, region.point.y);
+
     while (
       riverCell &&
       riverCell.downslope &&
-      riverCell.watershed &&
-      riverCell.index !== region.watershed &&
+      riverCell.index !== region.downslope &&
       !seen.includes(riverCell.index) &&
       riverCell.elevation > settings.seaLevel
     ) {
-      const downslope = map.regions[riverCell.downslope];
-      ctx.lineTo(downslope.point.x, downslope.point.y);
+      const nextDown = regions[riverCell.downslope];
+      ctx.lineTo(nextDown.point.x, nextDown.point.y);
       ctx.stroke();
-      riverCell = downslope;
+      riverCell = nextDown;
     }
     ctx.closePath();
-  });
+  }
 }
 
 function getElevationColor(elevation: number, settings: Settings): string {
