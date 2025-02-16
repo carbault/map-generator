@@ -67,7 +67,7 @@ export default function SettingList(props: {
       </Field>
       <Field>
         <Label tooltip="Affects how close the island shape is to the shape type">
-          Shaping strength
+          Smooth coasts
         </Label>
         <Slider
           min={0}

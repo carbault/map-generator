@@ -26,7 +26,6 @@ const Slider = React.forwardRef<HTMLInputElement, SliderProps>((props, ref) => {
   } = props;
 
   const handleSetValue = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(event);
     onChange(event.currentTarget.valueAsNumber);
   };
 
