@@ -98,6 +98,15 @@ export default function SettingList(props: {
         />
       </Field>
       <Field>
+        <Label>Rainfall</Label>
+        <Slider
+          min={2}
+          max={30}
+          value={settings.rainFall}
+          onChange={updateSetting("rainFall")}
+        />
+      </Field>
+      <Field>
         <Label>Grid height</Label>
         <NumberInput
           min={25}
