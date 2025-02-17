@@ -39,6 +39,7 @@ export type Settings = {
   shapingFunction: ShapingFunction;
   seaLevel: number;
   wavelength: number;
+  rainFall: number;
   lerp: number;
   grid: Size;
 };

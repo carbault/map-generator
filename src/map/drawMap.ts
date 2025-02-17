@@ -45,7 +45,20 @@ function drawRivers(
   ctx.strokeStyle = "#0B466F";
   ctx.lineWidth = 2;
 
-  for (const region of regions) {
+  const springCandidates = regions
+    .slice()
+    .filter((r) => !!r.watershed && r.elevation > 0.75);
+
+  const maxSprings = (settings.rainFall / 100) * springCandidates.length;
+  const springs: RegionData[] = [];
+  for (let i = 0; i <= maxSprings; i++) {
+    const randIndex = Math.floor(Math.random() * springCandidates.length);
+    if (!springs.some((s) => s.index === springCandidates[randIndex].index)) {
+      springs.push(springCandidates[randIndex]);
+    }
+  }
+
+  for (const region of springs) {
     if (!region.watershed) {
       continue;
     }
@@ -57,7 +70,7 @@ function drawRivers(
     while (
       riverCell &&
       riverCell.downslope &&
-      riverCell.index !== region.downslope &&
+      riverCell.index !== region.watershed &&
       !seen.includes(riverCell.index) &&
       riverCell.elevation > settings.seaLevel
     ) {

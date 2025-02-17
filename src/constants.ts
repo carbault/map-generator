@@ -12,6 +12,7 @@ export const DEFAULT_SETTINGS: Settings = {
   wavelength: 0.12,
   lerp: 0.5,
   seaLevel: 0.5,
+  rainFall: 10,
   grid: { width: 100, height: 200 },
   shapingFunction: ShapingFunction.squareBump,
   type: MapType.island,
