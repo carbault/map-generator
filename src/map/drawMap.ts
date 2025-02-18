@@ -1,3 +1,4 @@
+import { MAX_RIVER_WIDTH } from "../constants";
 import { Settings, Size, Map, RegionData } from "../types";
 
 export function drawMapOnCanvas(
@@ -43,7 +44,6 @@ function drawRivers(
 ) {
   const seen: number[] = [];
   ctx.strokeStyle = "#0B466F";
-  ctx.lineWidth = 2;
 
   const springCandidates = regions
     .slice()
@@ -64,8 +64,8 @@ function drawRivers(
     }
 
     ctx.beginPath();
+    ctx.lineWidth = 2;
     let riverCell = region;
-    ctx.moveTo(region.point.x, region.point.y);
 
     while (
       riverCell &&
@@ -74,12 +74,15 @@ function drawRivers(
       !seen.includes(riverCell.index) &&
       riverCell.elevation > settings.seaLevel
     ) {
+      ctx.beginPath();
+      ctx.moveTo(riverCell.point.x, riverCell.point.y);
       const nextDown = regions[riverCell.downslope];
       ctx.lineTo(nextDown.point.x, nextDown.point.y);
       ctx.stroke();
+      ctx.lineWidth = Math.min(MAX_RIVER_WIDTH, (ctx.lineWidth += 0.3));
+      ctx.closePath();
       riverCell = nextDown;
     }
-    ctx.closePath();
   }
 }
 
