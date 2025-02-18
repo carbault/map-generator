@@ -27,3 +27,5 @@ export const SHAPING_FUNCTIONS: Record<
   "square-bump": squareBump,
   squircle: squircle,
 };
+
+export const MAX_RIVER_WIDTH = 10;
