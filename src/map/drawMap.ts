@@ -10,13 +10,6 @@ export function drawMapOnCanvas(
   ctx.clearRect(0, 0, canvasSize.width, canvasSize.height);
   drawRegions(ctx, map, settings);
   drawRivers(ctx, map.regions, settings);
-
-  //   ctx.beginPath();
-  //   ctx.strokeStyle = "white";
-  //   ctx.fillStyle = "white";
-  //   ctx.lineWidth = 1;
-  //   map.delaunay.render(ctx);
-  //   ctx.stroke();
 }
 
 function drawRegions(
@@ -59,10 +52,6 @@ function drawRivers(
   }
 
   for (const region of springs) {
-    if (!region.watershed) {
-      continue;
-    }
-
     ctx.beginPath();
     ctx.lineWidth = 2;
     let riverCell = region;
@@ -71,8 +60,7 @@ function drawRivers(
       riverCell &&
       riverCell.downslope &&
       riverCell.index !== region.watershed &&
-      !seen.includes(riverCell.index) &&
-      riverCell.elevation > settings.seaLevel
+      !seen.includes(riverCell.index)
     ) {
       ctx.beginPath();
       ctx.moveTo(riverCell.point.x, riverCell.point.y);
