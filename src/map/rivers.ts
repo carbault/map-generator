@@ -1,5 +1,6 @@
+import { shuffle } from "d3";
 import { Map, RegionData, Settings } from "../types";
-import { minBy, sortBy } from "../util/array";
+import { minBy } from "../util/array";
 
 export function calculateRivers(map: Map, settings: Settings): Map {
   let regions = calculateDownslopes(map, settings);
@@ -30,7 +31,6 @@ function calculateDownslopes(map: Map, settings: Settings): RegionData[] {
     return {
       ...region,
       downslope,
-      watershed: downslope,
       isCoast: adjacent.some((r) => r.elevation < settings.seaLevel),
     };
   });
@@ -38,7 +38,7 @@ function calculateDownslopes(map: Map, settings: Settings): RegionData[] {
 
 /**
  * For each region, calculate the watershed: the lowest
- * downslope region, where the rivers will meet the sea
+ * downslope region, where the river will meet the sea
  */
 function calculateWatersheds(
   mapRegions: RegionData[],
@@ -46,14 +46,25 @@ function calculateWatersheds(
 ): RegionData[] {
   const seen: number[] = [];
   const regions = [...mapRegions];
+  let springCount = 0;
+
+  const springCandidates = shuffle(
+    regions.filter((r) => r.elevation > 0.75 && !!r.downslope)
+  );
+  const maxSprings = (settings.rainFall / 100) * springCandidates.length;
 
   const nextDown = (r: RegionData): RegionData | undefined => {
     return r.downslope ? regions[r.downslope] : undefined;
   };
 
-  for (const region of sortBy(mapRegions, "elevation", "desc")) {
+  for (
+    let i = 0;
+    i < springCandidates.length && springCount < maxSprings;
+    i++
+  ) {
+    const region = springCandidates[i];
     const isOcean = region.elevation < settings.seaLevel;
-    if (!region.downslope || !region.watershed || region.isCoast || isOcean) {
+    if (!region.downslope || region.isCoast || isOcean) {
       continue;
     }
 
@@ -65,7 +76,7 @@ function calculateWatersheds(
       current &&
       !seen.includes(current.index) &&
       !seenThisLoop.includes(current.index) &&
-      iterations < 100
+      iterations < 50
     ) {
       const next = current.downslope;
       seenThisLoop.push(current.index);
@@ -89,7 +100,8 @@ function calculateWatersheds(
       regions[region.index].watershed = undefined;
     } else if (current) {
       if (!seen.includes(current.index)) seen.push(current.index);
-      regions[region.index].watershed = regions[current.index].watershed;
+      regions[region.index].watershed = regions[current.index].downslope;
+      springCount += 1;
     }
 
     seen.push(region.index);

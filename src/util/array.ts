@@ -44,3 +44,14 @@ export function sortBy<
     .slice()
     .sort((a, b) => (direction === "asc" ? a[key] - b[key] : b[key] - a[key]));
 }
+
+/**
+ * Shuffle an array
+ */
+export function shuffle<T>(arr: T[]) {
+  return arr
+    .slice()
+    .map((value) => ({ value, newIndex: Math.random() }))
+    .sort((a, b) => a.newIndex - b.newIndex)
+    .map(({ value }) => value);
+}

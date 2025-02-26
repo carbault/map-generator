@@ -9,7 +9,7 @@ export function drawMapOnCanvas(
 ) {
   ctx.clearRect(0, 0, canvasSize.width, canvasSize.height);
   drawRegions(ctx, map, settings);
-  drawRivers(ctx, map.regions, settings);
+  drawRivers(ctx, map.regions);
 }
 
 function drawRegions(
@@ -30,26 +30,13 @@ function drawRegions(
   }
 }
 
-function drawRivers(
-  ctx: CanvasRenderingContext2D,
-  regions: RegionData[],
-  settings: Settings
-) {
+function drawRivers(ctx: CanvasRenderingContext2D, regions: RegionData[]) {
   const seen: number[] = [];
   ctx.strokeStyle = "#0B466F";
 
-  const springCandidates = regions
+  const springs = regions
     .slice()
     .filter((r) => !!r.watershed && r.elevation > 0.75);
-
-  const maxSprings = (settings.rainFall / 100) * springCandidates.length;
-  const springs: RegionData[] = [];
-  for (let i = 0; i <= maxSprings; i++) {
-    const randIndex = Math.floor(Math.random() * springCandidates.length);
-    if (!springs.some((s) => s.index === springCandidates[randIndex].index)) {
-      springs.push(springCandidates[randIndex]);
-    }
-  }
 
   for (const region of springs) {
     ctx.beginPath();
