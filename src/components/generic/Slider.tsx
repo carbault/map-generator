@@ -1,15 +1,16 @@
 import classNames from "classnames";
 import React from "react";
+import { useNumericInputValue } from "../../hooks/useNumericInputValue";
 
 export type SliderProps = Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
-  "onChange" | "value" | "type" | "min" | "max" | "step"
+  "onChange" | "onSubmit" | "value" | "type" | "min" | "max" | "step"
 > & {
   min?: number;
   max?: number;
   step?: number;
   value: number;
-  onChange: (value: number) => void;
+  onSubmit: (value: number | undefined) => void;
 };
 
 const THUMB_SIZE = 16;
@@ -21,15 +22,16 @@ const Slider = React.forwardRef<HTMLInputElement, SliderProps>((props, ref) => {
     min = 0,
     max = 1,
     step = 0.01,
-    onChange,
+    onSubmit,
     ...inputProps
   } = props;
 
-  const handleSetValue = (event: React.ChangeEvent<HTMLInputElement>) => {
-    onChange(event.currentTarget.valueAsNumber);
-  };
+  const { inputRef, editedValue, handleSubmit, handleChange } =
+    useNumericInputValue(onSubmit);
 
-  const ratio = (value - min) / (max - min);
+  const currentValue =
+    editedValue !== null && editedValue !== undefined ? editedValue : value;
+  const ratio = (currentValue - min) / (max - min);
 
   return (
     <div
@@ -42,7 +44,7 @@ const Slider = React.forwardRef<HTMLInputElement, SliderProps>((props, ref) => {
     >
       <div className="absolute top-1 z-0 h-1 w-full rounded bg-snow">
         <div
-          style={{ width: `${(value / max) * 100}%` }}
+          style={{ width: `${(currentValue / max) * 100}%` }}
           className="h-1 rounded bg-lake-shallower group-hover:bg-lake-shallow"
         />
       </div>
@@ -52,12 +54,13 @@ const Slider = React.forwardRef<HTMLInputElement, SliderProps>((props, ref) => {
       />
       <input
         {...inputProps}
-        value={value}
+        value={currentValue}
         min={min}
         max={max}
         step={step}
-        onChange={handleSetValue}
-        ref={ref}
+        onChange={handleChange}
+        onMouseUp={handleSubmit}
+        ref={ref ?? inputRef}
         className="absolute top-0 left-0 h-4 w-full cursor-pointer rounded opacity-0"
         type="range"
       />

@@ -73,7 +73,7 @@ export default function SettingList(props: {
           min={0}
           max={1}
           value={settings.lerp}
-          onChange={updateSetting("lerp")}
+          onSubmit={updateSetting("lerp")}
         />
       </Field>
       <Field>
@@ -85,7 +85,7 @@ export default function SettingList(props: {
           max={0.3}
           step={0.001}
           value={settings.wavelength}
-          onChange={updateSetting("wavelength")}
+          onSubmit={updateSetting("wavelength")}
         />
       </Field>
       <Field>
@@ -94,7 +94,7 @@ export default function SettingList(props: {
           min={0}
           max={1}
           value={settings.seaLevel}
-          onChange={updateSetting("seaLevel")}
+          onSubmit={updateSetting("seaLevel")}
         />
       </Field>
       <Field>
@@ -103,7 +103,7 @@ export default function SettingList(props: {
           min={2}
           max={30}
           value={settings.rainFall}
-          onChange={updateSetting("rainFall")}
+          onSubmit={updateSetting("rainFall")}
         />
       </Field>
       <Field>

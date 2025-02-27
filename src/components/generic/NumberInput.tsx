@@ -1,5 +1,6 @@
 import classNames from "classnames";
-import React, { useRef, useState } from "react";
+import React from "react";
+import { useNumericInputValue } from "../../hooks/useNumericInputValue";
 
 export type InputProps = Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
@@ -13,45 +14,14 @@ const NumberInput = React.forwardRef<HTMLInputElement, InputProps>(
   (props, ref) => {
     const { value, onSubmit, className, ...restProps } = props;
 
-    const inputRef = useRef<HTMLInputElement>(null);
-    const isEscapePressed = useRef<boolean>(false);
-    const [editedValue, setEditedValue] = useState<number>();
-
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      const valueAsNumber = event.currentTarget.valueAsNumber;
-      if (isFinite(valueAsNumber)) {
-        setEditedValue(valueAsNumber);
-        return;
-      }
-      setEditedValue(undefined);
-    };
-
-    const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-      if (event.key === "Escape") {
-        isEscapePressed.current = true;
-        inputRef.current?.blur();
-      }
-
-      if (event.key === "Enter") {
-        inputRef.current?.blur();
-      }
-    };
-
-    const handleBlur = () => {
-      if (isEscapePressed.current) {
-        setEditedValue(undefined);
-      } else {
-        onSubmit(editedValue);
-        setEditedValue(undefined);
-      }
-      isEscapePressed.current = false;
-    };
+    const { inputRef, editedValue, handleSubmit, handleChange, handleKeyDown } =
+      useNumericInputValue(onSubmit);
 
     return (
       <input
         {...restProps}
         value={editedValue ?? value}
-        onBlur={handleBlur}
+        onBlur={handleSubmit}
         onKeyDown={handleKeyDown}
         onChange={handleChange}
         ref={inputRef ?? ref}
