@@ -7,7 +7,7 @@ export function indexBy<
   T extends { [key in K]: V },
   K extends keyof T,
   V extends string | number | symbol,
->(arr: T[], key: K): Record<T[K], T> {
+>(arr: readonly T[], key: K): Record<T[K], T> {
   const record = {} as Record<T[K], T>;
   arr.forEach((value: T) => {
     record[value[key]] = value;
@@ -20,15 +20,13 @@ export function indexBy<
  * value for a given number attribute
  */
 export function minBy<T extends { [key in K]: number }, K extends keyof T>(
-  arr: T[],
+  arr: readonly T[],
   key: K
 ): T {
-  return arr
-    .slice()
-    .reduce(
-      (acc, current) => (acc[key] > current[key] ? current : acc),
-      arr[0]
-    );
+  return arr.reduce(
+    (acc, current) => (acc[key] > current[key] ? current : acc),
+    arr[0]
+  );
 }
 
 /**
@@ -39,7 +37,7 @@ export function sortBy<
   T extends { [key in K]: V },
   K extends keyof T,
   V extends number,
->(arr: T[], key: K, direction: "asc" | "desc" = "asc"): T[] {
+>(arr: readonly T[], key: K, direction: "asc" | "desc" = "asc"): T[] {
   return arr
     .slice()
     .sort((a, b) => (direction === "asc" ? a[key] - b[key] : b[key] - a[key]));
@@ -48,9 +46,8 @@ export function sortBy<
 /**
  * Shuffle an array
  */
-export function shuffle<T>(arr: T[]) {
+export function shuffle<T>(arr: readonly T[]) {
   return arr
-    .slice()
     .map((value) => ({ value, newIndex: Math.random() }))
     .sort((a, b) => a.newIndex - b.newIndex)
     .map(({ value }) => value);
