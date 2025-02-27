@@ -34,9 +34,7 @@ function drawRivers(ctx: CanvasRenderingContext2D, regions: FullRegionData[]) {
   const seen: number[] = [];
   ctx.strokeStyle = "#0B466F";
 
-  const springs = regions
-    .slice()
-    .filter((r) => !!r.watershed && r.elevation > 0.75);
+  const springs = regions.slice().filter((r) => !!r.watershed);
 
   for (const region of springs) {
     ctx.beginPath();
