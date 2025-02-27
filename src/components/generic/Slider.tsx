@@ -26,7 +26,7 @@ const Slider = React.forwardRef<HTMLInputElement, SliderProps>((props, ref) => {
     ...inputProps
   } = props;
 
-  const { inputRef, editedValue, handleSubmit, handleChange } =
+  const { inputRef, editedValue, handleSubmit, handleChange, handleKeyDown } =
     useNumericInputValue(onSubmit);
 
   const currentValue =
@@ -60,6 +60,7 @@ const Slider = React.forwardRef<HTMLInputElement, SliderProps>((props, ref) => {
         step={step}
         onChange={handleChange}
         onMouseUp={handleSubmit}
+        onKeyDown={handleKeyDown}
         ref={ref ?? inputRef}
         className="absolute top-0 left-0 h-4 w-full cursor-pointer rounded opacity-0"
         type="range"
