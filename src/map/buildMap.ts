@@ -26,20 +26,21 @@ export function buildMap(
     width: canvas.height,
   };
 
-  let map: Map = {
-    regions: points.map((point, index) => ({
-      point,
-      index,
-      ...getElevationAndDistanceScore(point, scale, settings, elevationNoise),
-      moisture: 0,
-      river: 0,
-    })),
+  const baseRegionData = points.map((point, index) => ({
+    point,
+    index,
+    ...getElevationAndDistanceScore(point, scale, settings, elevationNoise),
+    moisture: 0,
+    river: 0,
+  }));
+
+  const map: Map = {
+    regions: calculateRivers(baseRegionData, voronoi, settings),
     delaunay,
     triangleCount: delaunay.halfedges.length / 3,
     voronoi,
     scale,
   };
-  map = calculateRivers(map, settings);
   drawMapOnCanvas(map, ctx, canvasSize, settings);
 }
 

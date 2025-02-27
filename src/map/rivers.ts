@@ -1,25 +1,38 @@
-import { shuffle } from "d3";
-import { Map, RegionData, Settings } from "../types";
+import { shuffle, Voronoi } from "d3";
+import {
+  FullRegionData,
+  Settings,
+  BaseRegionData,
+  Point,
+  RegionDataWithDownslope,
+} from "../types";
 import { minBy } from "../util/array";
 
-export function calculateRivers(map: Map, settings: Settings): Map {
-  let regions = calculateDownslopes(map, settings);
-  regions = calculateWatersheds(regions, settings);
-  return { ...map, regions };
+export function calculateRivers(
+  regions: BaseRegionData[],
+  voronoi: Voronoi<Point>,
+  settings: Settings
+): FullRegionData[] {
+  return calculateWatersheds(
+    calculateDownslopes(regions, voronoi, settings),
+    settings
+  );
 }
 
 /**
  * For each region, get the one downstream from it
  * This is used to calculate rivers
  */
-function calculateDownslopes(map: Map, settings: Settings): RegionData[] {
-  return map.regions.map((region, i) => {
-    const adjacent = Array.from(map.voronoi.neighbors(i)).map(
-      (i) => map.regions[i]
-    );
+function calculateDownslopes(
+  regions: BaseRegionData[],
+  voronoi: Voronoi<Point>,
+  settings: Settings
+): RegionDataWithDownslope[] {
+  return regions.map((region, i) => {
+    const adjacent = Array.from(voronoi.neighbors(i)).map((i) => regions[i]);
 
     if (adjacent.length === 0) {
-      return region;
+      return { ...region, downslope: 0, isCoast: false };
     }
 
     const lowestAdjacent = minBy(adjacent, "elevation");
@@ -41,19 +54,23 @@ function calculateDownslopes(map: Map, settings: Settings): RegionData[] {
  * downslope region, where the river will meet the sea
  */
 function calculateWatersheds(
-  mapRegions: RegionData[],
+  mapRegions: RegionDataWithDownslope[],
   settings: Settings
-): RegionData[] {
+): FullRegionData[] {
   const seen: number[] = [];
-  const regions = [...mapRegions];
+  const regions: FullRegionData[] = mapRegions.map((r) => ({
+    ...r,
+    watershed: null,
+    river: 0,
+  }));
   let springCount = 0;
 
   const springCandidates = shuffle(
-    regions.filter((r) => r.elevation > 0.75 && !!r.downslope)
+    regions.slice().filter((r) => r.elevation > 0.75 && !!r.downslope)
   );
   const maxSprings = (settings.rainFall / 100) * springCandidates.length;
 
-  const nextDown = (r: RegionData): RegionData | undefined => {
+  const nextDown = (r: FullRegionData): FullRegionData | undefined => {
     return r.downslope ? regions[r.downslope] : undefined;
   };
 
@@ -97,10 +114,11 @@ function calculateWatersheds(
       !current ||
       (current && (nextDown(current)?.elevation ?? 0) > settings.seaLevel)
     ) {
-      regions[region.index].watershed = undefined;
+      regions[region.index].watershed = null;
     } else if (current) {
       if (!seen.includes(current.index)) seen.push(current.index);
       regions[region.index].watershed = regions[current.index].downslope;
+      regions[region.index].river = iterations;
       springCount += 1;
     }
 

@@ -2,20 +2,26 @@ export type Point = { x: number; y: number };
 
 export type Size = { height: number; width: number };
 
-export type RegionData = {
+export type BaseRegionData = {
   point: Point;
   index: number;
   elevation: number;
   moisture: number; // TODO generate + mix with elevation to generate biomes
-  river: number; // 0 if no river, or volume of water in river
   distanceScore: number; // used to compute path to sea
-  downslope?: number; // index of lowest adjacent region
-  watershed?: number; // index of coastal watershed region
-  isCoast?: boolean;
+};
+
+export type RegionDataWithDownslope = BaseRegionData & {
+  downslope: number; // index of lowest adjacent region
+  isCoast: boolean;
+};
+
+export type FullRegionData = RegionDataWithDownslope & {
+  river: number; // 0 if no river, or volume of water in river
+  watershed: number | null; // index of coastal watershed region
 };
 
 export type Map = {
-  regions: RegionData[];
+  regions: FullRegionData[];
   triangleCount: number;
   delaunay: d3.Delaunay<Point>;
   voronoi: d3.Voronoi<Point>;

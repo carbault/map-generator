@@ -1,5 +1,5 @@
 import { MAX_RIVER_WIDTH } from "../constants";
-import { Settings, Size, Map, RegionData } from "../types";
+import { Settings, Size, Map, FullRegionData } from "../types";
 
 export function drawMapOnCanvas(
   map: Map,
@@ -30,7 +30,7 @@ function drawRegions(
   }
 }
 
-function drawRivers(ctx: CanvasRenderingContext2D, regions: RegionData[]) {
+function drawRivers(ctx: CanvasRenderingContext2D, regions: FullRegionData[]) {
   const seen: number[] = [];
   ctx.strokeStyle = "#0B466F";
 
