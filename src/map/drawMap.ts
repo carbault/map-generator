@@ -54,6 +54,7 @@ function drawRivers(ctx: CanvasRenderingContext2D, regions: FullRegionData[]) {
       ctx.stroke();
       ctx.lineWidth = Math.min(MAX_RIVER_WIDTH, (ctx.lineWidth += 0.3));
       ctx.closePath();
+      seen.push(riverCell.index);
       riverCell = nextDown;
     }
   }
